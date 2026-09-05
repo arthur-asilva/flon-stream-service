@@ -1,0 +1,79 @@
+# =============================================================================
+# Build (CMake) - tudo gerado pela compilacao, nunca deve ser versionado
+# =============================================================================
+build/
+compile_commands.json
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+*.ninja
+.ninja_log
+
+# =============================================================================
+# Binarios compilados
+# =============================================================================
+zsafe_service
+tune_camera
+diag_cameras
+*.o
+*.obj
+*.so
+*.a
+*.exe
+
+# =============================================================================
+# Saida em tempo de execucao - dados gerados, NAO codigo-fonte.
+# Cada gravacao real cria uma pasta records/<id>/ com video + csv - isso
+# nao deve entrar no historico do Git (cresce sem controle, sao dados de
+# experimento, nao configuracao do sistema).
+# =============================================================================
+src/records/*/
+src/records/system.log
+src/records/*.log
+
+# Mantem a pasta records/ existindo no repo (git nao versiona pastas
+# vazias por padrao) sem versionar o conteudo gerado nela.
+!src/records/.gitkeep
+
+# =============================================================================
+# Video(s) de amostra/teste - binarios grandes, normalmente nao devem
+# entrar no Git puro (bloat de historico). Se for essencial ter um video
+# de teste versionado, considere Git LFS em vez de remover esta linha.
+# =============================================================================
+src/samples/*.avi
+src/samples/*.mp4
+
+# =============================================================================
+# Python (scripts de calibracao)
+# =============================================================================
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# =============================================================================
+# Editor / SO
+# =============================================================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.swp
+
+# Indice local do clangd (autocomplete/navegacao) - puramente derivado
+# do codigo-fonte, reconstruido automaticamente a cada vez que o
+# language server roda. Nunca deve ser versionado.
+.cache/
+
+# =============================================================================
+# Backups criados manualmente durante debug (ex: install.sh faz backup
+# de arquivos de boot do sistema, mas isso fica fora do repo, no
+# Raspberry Pi - listado aqui so por seguranca caso algo semelhante
+# apareca dentro da pasta do projeto por engano)
+# =============================================================================
+*.bak
+*.bak-zsafe
