@@ -118,6 +118,26 @@ std::string MjpegServer::getQueryString(
     );
 }
 
+bool MjpegServer::hasQueryParam(
+    const std::string& request,
+    const std::string& parameterName
+) const
+{
+    const std::size_t firstLineEnd =
+        request.find("\r\n");
+
+    if (firstLineEnd == std::string::npos)
+        return false;
+
+    const std::string firstLine =
+        request.substr(0, firstLineEnd);
+
+    const std::string key =
+        parameterName + "=";
+
+    return firstLine.find(key) != std::string::npos;
+}
+
 MjpegServer::StreamParams
 MjpegServer::getStreamParams(
 const std::string& request
@@ -147,6 +167,12 @@ params.durationSeconds =
 
 params.wellsCount =
     getQueryInt(request, "wells_count");
+
+// Distingue "chave ausente da URL" (nao mexe na configuracao
+// atual) de "presente, mesmo que invalida/zero" (pedido
+// explicito de ver sem mascara - ver uso em MjpegServer::run()).
+params.wellsCountProvided =
+    hasQueryParam(request, "wells_count");
 
 if (params.durationSeconds < 1 ||
     params.durationSeconds > 3600)
@@ -398,14 +424,18 @@ sizeof(clientAddress);
     const StreamParams params =
         getStreamParams(request);
 
-    // So atualiza a configuracao global se o request trouxe
-    // um wells_count valido. Qualquer outro request paralelo
-    // que caia nesta mesma porta (ex: o navegador pedindo
-    // /favicon.ico ao abrir a aba) chega aqui com wells_count
-    // zerado por getStreamParams() e NAO deve resetar a
-    // contagem de pocos em uso - isso limparia o estado de
-    // rastreio (ultima posicao) de todos os pocos sem motivo.
-    if(params.wellsCount != 0)
+    // So atualiza a configuracao global se o request trouxe a
+    // CHAVE wells_count na URL - mesmo que com valor invalido/0.
+    // Isso distingue duas situacoes:
+    //   - chave ausente (ex: /favicon.ico, ou qualquer request
+    //     paralelo que caia nesta mesma porta sem querer) -> NAO
+    //     mexe na configuracao atual, protege contra reset
+    //     acidental do estado de rastreio de todos os pocos.
+    //   - chave presente mas invalida/0 (ex: ?wells_count=0, ou
+    //     so ?id=1&duration=20 sem duracao valida de layout) ->
+    //     pedido EXPLICITO de ver o frame sem mascara, util para
+    //     conferir visualmente o alinhamento das cameras.
+    if(params.wellsCountProvided)
     {
         cameraCapture_.setWellsCount(
             params.wellsCount

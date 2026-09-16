@@ -17,18 +17,18 @@ constexpr int kFrameHeight = 690;
 //
 // Camera 0 = metade superior do frame final.
 const std::array<cv::Point2f, 4> kRoiTop = {
-    cv::Point2f(123.0f, 357.0f),
-    cv::Point2f(120.0f, 1222.0f),
-    cv::Point2f(2668.0f, 1235.0f),
-    cv::Point2f(2676.0f, 373.0f)
+    cv::Point2f(72.0f, 141.0f),
+    cv::Point2f(64.0f, 1008.0f),
+    cv::Point2f(2645.0f, 1031.0f),
+    cv::Point2f(2658.0f, 169.0f)
 };
 
 // Camera 1 = metade inferior do frame final.
 const std::array<cv::Point2f, 4> kRoiBottom = {
-    cv::Point2f(102.0f, 887.0f),
-    cv::Point2f(87.0f, 1755.0f),
-    cv::Point2f(2653.0f, 1770.0f),
-    cv::Point2f(2658.0f, 908.0f)
+    cv::Point2f(123.0f, 674.0f),
+    cv::Point2f(113.0f, 1538.0f),
+    cv::Point2f(2707.0f, 1564.0f),
+    cv::Point2f(2714.0f, 702.0f)
 };
 }
 
