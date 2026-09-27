@@ -17,17 +17,17 @@ constexpr int kFrameHeight = 690;
 //
 
 const std::array<cv::Point2f, 4> kRoiTop = {
-    cv::Point2f(144.0f, 818.0f),
-    cv::Point2f(141.0f, 1700.0f),
-    cv::Point2f(2745.0f, 1721.0f),
-    cv::Point2f(2750.0f, 838.0f)
+    cv::Point2f(105.0f, 301.0f),
+    cv::Point2f(105.0f, 1170.0f),
+    cv::Point2f(2673.0f, 1170.0f),
+    cv::Point2f(2673.0f, 324.0f)
 };
 
 const std::array<cv::Point2f, 4> kRoiBottom = {
-    cv::Point2f(105.0f, 218.0f),
-    cv::Point2f(97.0f, 1096.0f),
-    cv::Point2f(2694.0f, 1116.0f),
-    cv::Point2f(2709.0f, 239.0f)
+    cv::Point2f(221.0f, 828.0f),
+    cv::Point2f(221.0f, 1703.0f),
+    cv::Point2f(2789.0f, 1703.0f),
+    cv::Point2f(2789.0f, 856.0f)
 };
 
 }

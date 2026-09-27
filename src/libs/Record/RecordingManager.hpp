@@ -1,22 +1,22 @@
 #pragma once
 
-#include "Common.hpp"
+#include <opencv2/opencv.hpp>
 
-#include "WellDetection.hpp"
-
+#include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <mutex>
+#include <string>
 #include <vector>
+
+#include "WellDetection.hpp"
 
 class RecordingManager
 {
 public:
 
     RecordingManager();
-
-    // id deve ser uma string apenas de digitos (validacao
-    // feita em MjpegServer). Cria a pasta records/<id>/ e
-    // salva sample.avi + coordinates.csv dentro dela.
+    
     void start(
         const std::string& id,
         int durationSeconds
@@ -24,9 +24,6 @@ public:
 
     void stop();
 
-    // Grava um frame de video e, se houver deteccoes, uma
-    // linha correspondente em coordinates.csv. So tem
-    // efeito enquanto isRecording() for true.
     void process(
         const cv::Mat& frame,
         const std::vector<WellDetection>& detections
@@ -36,31 +33,40 @@ public:
 
 private:
 
-    // Executa a parada assumindo que mutex_ ja esta
-    // travado pelo chamador (evita deadlock quando
-    // process() precisa parar a gravacao internamente).
     void stopLocked();
 
-    // Escreve o cabecalho do CSV (frame_index,x<id>,y<id>,...)
-    // usando a ordem/identidade das deteccoes da primeira
-    // linha gravada. So executa uma vez por gravacao.
-    void writeCsvHeaderLocked(
-        const std::vector<WellDetection>& detections
-    );
+    void writeCsvHeaderLocked(const std::vector<WellDetection>& detections);
+
+    void writeCsvRowLocked(const std::vector<WellDetection>& detections);
 
     mutable std::mutex mutex_;
 
     bool recording_;
+    bool csvHeaderWritten_;
 
+    int id_;
+
+    std::string sessionDir_;
     std::string videoFileName_;
+    std::string csvFileName_;
 
     cv::VideoWriter writer_;
-
     std::ofstream csvFile_;
 
-    bool csvHeaderWritten_ = false;
-
-    long long frameIndex_ = 0;
+    long frameIndex_;
 
     std::chrono::steady_clock::time_point endTime_;
+
+    // Paceamento de frames: garante que o video gravado tenha
+    // exatamente kTargetFps frames por segundo REAL, independente
+    // da taxa real de entrega de frames das cameras. Sem isso, se a
+    // camera entregar frames mais rapido que o fps declarado no
+    // VideoWriter, o video final "dura" mais do que o tempo real de
+    // gravacao quando reproduzido (frames_escritos / fps_declarado).
+    std::chrono::steady_clock::time_point recordStart_;
+    std::chrono::steady_clock::time_point nextFrameDue_;
+
+    static constexpr double kTargetFps = 30.0;
+    static constexpr int kFrameWidth = 1024;
+    static constexpr int kFrameHeight = 690;
 };

@@ -86,7 +86,7 @@ private:
 
     // Gain e gama calibrados com o tune_camera - confirmados
     // identicos nas duas unidades fisicas usadas neste projeto.
-    static constexpr double kGain = 24.0;
+    static constexpr double kGain = 18.0;
 
     static constexpr double kGamma = 1.318;
 
